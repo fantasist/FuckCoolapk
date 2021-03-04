@@ -7,17 +7,14 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Binder
-import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import com.fuckcoolapk.module.*
 import com.fuckcoolapk.utils.*
-import com.fuckcoolapk.utils.ktx.*
+import com.fuckcoolapk.utils.ktx.MethodHookParam
+import com.fuckcoolapk.utils.ktx.hookAfterAllMethods
+import com.fuckcoolapk.utils.ktx.hookAfterMethod
 import com.fuckcoolapk.view.TextViewForHook
-import com.microsoft.appcenter.AppCenter
-import com.microsoft.appcenter.analytics.Analytics
-import com.microsoft.appcenter.crashes.Crashes
 import com.sfysoft.android.xposed.shelling.XposedShelling
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -68,23 +65,6 @@ class InitHook : IXposedHookLoadPackage {
                     CoolapkContext.activity = activityParam.result as Activity
                     LogUtil.d("Current activity: ${CoolapkContext.activity.javaClass}")
                 }
-        //eula&Appcenter
-        try {
-            XposedHelpers.findClass("com.coolapk.market.view.main.MainActivity", CoolapkContext.classLoader)
-                    .hookAfterMethod("onCreate", Bundle::class.java) {
-                        //appcenter
-                        AppCenter.start(CoolapkContext.activity.application, "19597f3e-09e4-4422-9416-5dbc16cad3db", Analytics::class.java, Crashes::class.java)
-                        if (CoolapkContext.loginSession.callMethod("isLogin") as Boolean) {
-                            Analytics.trackEvent("user ${CoolapkContext.loginSession.callMethod("getUserName") as String}", HashMap<String, String>().apply {
-                                put("userName", CoolapkContext.loginSession.callMethod("getUserName") as String)
-                                put("UID", CoolapkContext.loginSession.callMethod("getUid") as String)
-                                put("isAdmin", (CoolapkContext.loginSession.callMethod("isAdmin") as Boolean).toString())
-                            })
-                        }
-                    }
-        } catch (e: Throwable) {
-            LogUtil.e(e)
-        }
         //关闭反 xposed
         DisableAntiXposed().init()
         //隐藏模块
@@ -126,7 +106,7 @@ class InitHook : IXposedHookLoadPackage {
 
 fun showEulaDialog(activity: Activity, eula: String) {
     val markwon = Markwon.builder(CoolapkContext.activity).build()
-    var time = 30
+    var time = 3
     val dialogBuilder = AlertDialog.Builder(activity)
     val linearLayout = LinearLayout(activity).apply {
         orientation = LinearLayout.VERTICAL
@@ -174,7 +154,7 @@ fun showEulaDialog(activity: Activity, eula: String) {
         do {
             positiveButton.post { positiveButton.text = "我已阅读并同意本协议 (${time}s)" }
             Thread.sleep(1000)
-        } while (--time != 0)
+        } while (--time > 0)
         positiveButton.post {
             positiveButton.text = "我已阅读并同意本协议"
             positiveButton.isClickable = true

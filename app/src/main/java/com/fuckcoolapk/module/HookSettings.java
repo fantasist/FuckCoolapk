@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -17,17 +15,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.fuckcoolapk.AppConfigKt;
 import com.fuckcoolapk.BuildConfig;
-import com.fuckcoolapk.InitHook;
 import com.fuckcoolapk.InitHookKt;
 import com.fuckcoolapk.utils.AppUtilKt;
 import com.fuckcoolapk.utils.CoolapkContext;
@@ -35,20 +28,16 @@ import com.fuckcoolapk.utils.CoolapkContextKt;
 import com.fuckcoolapk.utils.GetUtil;
 import com.fuckcoolapk.utils.LogUtil;
 import com.fuckcoolapk.utils.OwnSP;
-import com.fuckcoolapk.view.AdjustImageView;
 import com.fuckcoolapk.view.AdjustImageViewForHook;
 import com.fuckcoolapk.view.ClickableTextViewForHook;
 import com.fuckcoolapk.view.EditTextForHook;
 import com.fuckcoolapk.view.SwitchForHook;
 import com.fuckcoolapk.view.TextViewForHook;
-import com.watermark.androidwm_light.WatermarkBuilder;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
-import kotlin.jvm.functions.Function0;
 
 public class HookSettings {
     private Boolean isOpen = false;
